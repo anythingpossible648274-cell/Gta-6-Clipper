@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GTA 6 Clipper</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1b1035;--surface:#2a1850;--line:#4a3380;--text:#fff1dc;--muted:#b9a8dc;--hot:#ff3d81;--cyan:#29e0d0;--on-hot:#1b1035;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#fff4e2;--surface:#ffe6c4;--line:#e3b98a;--text:#2a1250;--muted:#6d4f94;--hot:#d91a64;--cyan:#0a8f85;--on-hot:#fff;color-scheme:light}}
+:root[data-theme="light"]{--bg:#fff4e2;--surface:#ffe6c4;--line:#e3b98a;--text:#2a1250;--muted:#6d4f94;--hot:#d91a64;--cyan:#0a8f85;--on-hot:#fff;color-scheme:light}
+*,*:before,*:after{box-sizing:inherit}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Figtree,system-ui,sans-serif;font-size:16px}
+main{max-width:480px;margin:0 auto;padding:20px 18px 40px}
+h1{font-family:Unbounded,system-ui,sans-serif;font-weight:800;font-size:34px;line-height:1.05;margin:8px 0 6px;letter-spacing:-.5px}
+h1 span{color:var(--hot)}
+.sub{color:var(--muted);margin:0 0 22px}
+label{display:block;font-weight:600;margin:0 0 6px}
+input[type=url]{width:100%;padding:14px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--text);font:inherit}
+input[type=url]:focus,button:focus-visible,input[type=range]:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+.row{display:flex;justify-content:space-between;align-items:baseline}
+.val{font-family:Unbounded,sans-serif;color:var(--cyan);font-size:15px}
+input[type=range]{width:100%;accent-color:var(--hot);margin:6px 0 16px}
+.field{margin-bottom:12px}
+.go{width:100%;margin-top:6px;padding:16px;border:0;border-radius:14px;background:var(--hot);color:var(--on-hot);font:600 18px Unbounded,sans-serif;cursor:pointer}
+.go:disabled{opacity:.6}
+.err{color:var(--hot);min-height:20px;margin:6px 0 0;font-size:14px}
+#prog{display:none;margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.bar{height:8px;border-radius:8px;background:var(--line);overflow:hidden;margin:10px 0}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--hot),var(--cyan));transition:width .4s}
+#step{margin:0;font-weight:600}
+#res{display:none;margin-top:26px}
+#res h2{font-family:Unbounded,sans-serif;font-size:18px;margin:0 0 12px}
+.clip{display:flex;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px}
+.thumb{flex:0 0 76px;aspect-ratio:9/16;border-radius:10px;display:flex;align-items:flex-end;justify-content:center;padding:6px;font-size:10px;font-weight:600;color:#fff;text-align:center;line-height:1.1}
+.info{flex:1;min-width:0}
+.info b{display:block;margin-bottom:2px}
+.meta{color:var(--muted);font-size:14px;margin:0 0 10px}
+.score{color:var(--cyan);font-weight:600}
+.btns{display:flex;gap:8px}
+.btns button{flex:1;padding:10px;border-radius:10px;border:2px solid var(--line);background:transparent;color:var(--text);font:600 14px Figtree,sans-serif;cursor:pointer}
+.btns button:first-child{border-color:var(--cyan)}
+.clip video{flex:0 0 96px;width:96px;aspect-ratio:9/16;border-radius:10px;background:#000;object-fit:cover}
+.btns a{flex:1;padding:10px;border-radius:10px;border:2px solid var(--cyan);color:var(--text);font:600 14px Figtree,sans-serif;text-align:center;text-decoration:none}
+.note{margin-top:18px;padding:12px;border-radius:12px;border:1px dashed var(--line);color:var(--muted);font-size:14px}
+@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>GTA 6 <span>Clipper</span></h1>
+<p class="sub">Paste a YouTube link. Get vertical clips of the best moments.</p>
+
+<div class="field">
+<label for="url">YouTube link</label>
+<input id="url" type="url" inputmode="url" placeholder="https://youtube.com/watch?v=...">
+</div>
+<div class="field">
+<div class="row"><label for="len">Clip length</label><span class="val" id="lenv">35 sec</span></div>
+<input id="len" type="range" min="15" max="60" value="35">
+<div class="row"><label for="cnt">Number of clips</label><span class="val" id="cntv">5</span></div>
+<input id="cnt" type="range" min="1" max="10" value="5">
+</div>
+<button class="go" id="go">Clipper</button>
+<p class="err" id="err" role="alert"></p>
+
+<section id="prog" aria-live="polite">
+<p id="step">Starting...</p>
+<div class="bar"><i id="fill"></i></div>
+</section>
+
+<section id="res">
+<h2>Your clips</h2>
+<div id="list"></div>
+</section>
+
+
+</main>
+<script>
+var $=function(i){return document.getElementById(i)};
+$("len").oninput=function(){$("lenv").textContent=this.value+" sec"};
+$("cnt").oninput=function(){$("cntv").textContent=this.value};
+function valid(u){return /^https?:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//.test(u)}
+function fmt(s){var m=Math.floor(s/60),r=s%60;return m+":"+(r<10?"0":"")+r}
+function fail(m){$("prog").style.display="none";$("go").disabled=false;$("err").textContent=m||"Something went wrong."}
+$("go").onclick=async function(){
+  var u=$("url").value.trim();
+  if(!valid(u)){$("err").textContent="Paste a full YouTube link (youtube.com or youtu.be).";return}
+  $("err").textContent="";this.disabled=true;$("res").style.display="none";
+  $("prog").style.display="block";$("step").textContent="Starting";$("fill").style.width="2%";
+  try{
+    var r=await fetch("/api/clip",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:u,length:+$("len").value,count:+$("cnt").value})});
+    var d=await r.json();if(!r.ok)throw new Error(d.detail||"Request failed");poll(d.id);
+  }catch(e){fail(e.message)}
+};
+function poll(id){
+  var t=setInterval(async function(){
+    try{
+      var j=await (await fetch("/api/job/"+id)).json();
+      $("step").textContent=j.step||"Working";$("fill").style.width=(j.pct||0)+"%";
+      if(j.status==="done"){clearInterval(t);finish(j.clips)}
+      else if(j.status==="error"){clearInterval(t);fail(j.error)}
+    }catch(e){clearInterval(t);fail("Lost connection to the server.")}
+  },1500);
+}
+function finish(clips){
+  $("prog").style.display="none";$("go").disabled=false;
+  $("list").innerHTML=clips.map(function(c,i){
+    return '<div class="clip"><video src="'+c.file+'" controls playsinline preload="metadata"></video><div class="info"><b>Clip '+(i+1)+'</b><p class="meta">'+fmt(c.start)+' to '+fmt(c.end)+' · <span class="score">'+c.score+'/10</span></p><div class="btns"><a href="'+c.file+'" download>Save</a></div></div></div>';
+  }).join("");
+  $("res").style.display="block";$("res").scrollIntoView({behavior:"smooth"});
+}
+</script>
+</body>
+</html>
